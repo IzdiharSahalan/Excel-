@@ -1,9 +1,12 @@
+﻿Imports System.IO
+
 Public Class Form1
 
     Dim labelbox As TextBox
     'Dim disptxtbox As TextBox
     Dim newbox As TextBox
     Public boxes(10, 10) As TextBox
+    Dim StringToPrint As String
 
     Public Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
@@ -59,7 +62,6 @@ Public Class Form1
             Next
             rowcounter += 20
         Next
-
     End Sub
 
     Private Sub TextBox_TextChanged(sender As System.Object, e As System.EventArgs)
@@ -81,15 +83,15 @@ Public Class Form1
 
     Public Sub TextBox1_TextChanged(sender As Object, e As EventArgs) Handles disptextbox.TextChanged
         Dim a As String = disptextbox.Text
-        If (GetChar(a, 1) = "=") Then
-            boxes(1, 1).Text = "Hooray"
-            'boxes selected - focus/onClick
-            'triggered calc by =
-            'select textbox by clicking 
-            'append to box.focus()
-            'slice - sub()
-            'calculate - switch statement
-        End If
+        'If (GetChar(a, 1) = "=") Then
+        ' boxes(1, 1).Text = "Hooray"
+        'boxes selected - focus/onClick
+        'triggered calc by =
+        'select textbox by clicking 
+        'append to box.focus()
+        'slice - sub()
+        'calculate - switch statement
+        'End If
     End Sub
 
     Public focussedTextBox As TextBox
@@ -108,14 +110,59 @@ Public Class Form1
         Dim str As String = focussedTextBox.Text
         Dim separators() As String = {"+", "-", "*", "/", " "}
         Dim result() As String = str.Split(separators, StringSplitOptions.None)
+        Dim sum As Integer = 0
+        Dim minus As Integer = 0
         For Each s As String In result
-            '    MessageBox.Show(s)
+            Convert.ToInt32(s)
+            For k As Integer = 0 To focussedTextBox.Text.Length - 1
+                If (focussedTextBox.Text.Chars(k) = "+") Then
+                    sum += s
+                ElseIf (focussedTextBox.Text.Chars(k) = "-") Then
+                    Dim dif As Integer = Val(focussedTextBox.Text.Chars(k - 1))
+                    minus = dif - s
+                End If
+            Next
         Next
-        MessageBox.Show(len)
+        MessageBox.Show(sum)
+        'MessageBox.Show(minus)
+        'MessageBox.Show(len)
+
+
 
     End Sub
 
     Private Sub Generate_Click(sender As Object, e As EventArgs) Handles Button1.Click
         sulaisu()
     End Sub
+
+    Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
+        Dim myStream As Stream
+        Dim saveFileDialog1 As New SaveFileDialog()
+
+        saveFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*"
+        saveFileDialog1.FilterIndex = 2
+        saveFileDialog1.RestoreDirectory = True
+
+        If saveFileDialog1.ShowDialog() = DialogResult.OK Then
+            Dim sw As StreamWriter = New StreamWriter(saveFileDialog1.OpenFile())
+            If (sw IsNot Nothing) Then
+                For i As Integer = 1 To 10
+                    For j As Integer = 1 To 10
+                        If (boxes(i, j).Text <> Nothing) Then
+                            sw.Write(i & "," & j & " ")
+                            sw.WriteLine(boxes(i, j).Text)
+                        End If
+                    Next
+                Next
+                sw.Close()
+            End If
+
+        End If
+    End Sub
+
+    Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
+
+    End Sub
+
+
 End Class
